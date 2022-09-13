@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
 
-#define SIZE_OF_NAME 14
-#define SIZE_OF_SCORE 3
+#define SIZE_OF_NAME 14 //ì´ë¦„ ìµœëŒ€ê¸¸ì´ëŠ” 13+1(\n)
+#define SIZE_OF_SCORE 3 //êµ­ì–´,ì˜ì–´,ìˆ˜í•™ 3ê°€ì§€
 
 typedef struct score {
 	char name[14];
-	int score[3]; //±¹¾î, ¿µ¾î, ¼öÇĞ
-	int ranking[3]; //ÃÑÇÕ, Æò±Õ, ¼øÀ§
+	int score[3]; //êµ­ì–´, ì˜ì–´, ìˆ˜í•™
+	int ranking[3]; //ì´í•©, í‰ê· , ìˆœìœ„
 
 } SCORE ;
 
@@ -30,25 +31,27 @@ void AddData(DATA** pp_head, DATA** pp_tail, SCORE input) {
 		*pp_tail = (*pp_tail)->p_next;
 	}
 
-	/*ÀÌ¸§*/
-	for (i = 0; i < SIZE_OF_NAME; i++) {
-		(*pp_tail)->acheiv.name[i] = input.name[i];
-	}
-	/*Á¡¼ö*/
+	/*ì´ë¦„*/
+	//for (i = 0; i < SIZE_OF_NAME; i++) {
+	//	(*pp_tail)->acheiv.name[i] = input.name[i]; //strcmp
+	//}
+	strncpy((*pp_tail)->acheiv.name, input.name, sizeof((*pp_tail)->acheiv.name)-1);
+
+	/*ì ìˆ˜*/
 	for (i = 0; i < SIZE_OF_SCORE; i++) {
 		
 		(*pp_tail)->acheiv.score[i] = input.score[i];
 	}
-	/* ÃÑÇÕ, Æò±Õ, ¼øÀ§*/
+	/* ì´í•©, í‰ê· , ìˆœìœ„*/
 
 	(*pp_tail)->acheiv.ranking[0] = input.ranking[0];
 	(*pp_tail)->acheiv.ranking[1] = input.ranking[1];
-	(*pp_tail)->acheiv.ranking[2] = 0;  //¼øÀ§±îÁö ¸Å±â´Â ÇÔ¼ö´Â ÀÏ´Ü º¸·ù
+	(*pp_tail)->acheiv.ranking[2] = 0;  //ìˆœìœ„ê¹Œì§€ ë§¤ê¸°ëŠ” í•¨ìˆ˜ëŠ” ë©”ì¸í™”ë©´ì—ì„œ 2. ì„ íƒì‹œ ì ìš©
 
 	(*pp_tail)->p_next = NULL;
 }
 
-void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
+void scoreSort(DATA* p_head){ //ìˆœìœ„ê°’ ì§€ì • í•¨ìˆ˜
 
 	struct sort_Array {
 		int score;
@@ -58,11 +61,11 @@ void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
 
 	SORT_ARRAY* q_head = NULL;
 	SORT_ARRAY* q;
-	DATA* p = p_head; // p_head °ª º¸Á¸À» À§ÇØ p_head ´ë½Å p »ç¿ë(Áß¿ä)
-	int order; //¼øÀ§
-	int countNumber = 0; //ÇĞ»ı ¼ö
+	DATA* p = p_head; // p_head ê°’ ë³´ì¡´ì„ ìœ„í•´ p_head ëŒ€ì‹  p ì‚¬ìš©(ì¤‘ìš”)
+	int order; //ìˆœìœ„
+	int countNumber = 0; //í•™ìƒ ìˆ˜
 
-	// (1)---°¢ pp->acheiv.ranking[0], Áï Á¡¼öÃÑÇÕµé ÀúÀåÇÏ±â À§ÇÑ ¿¬°á¸®½ºÆ® ±¸¼º ¹× Á¡¼öÃÑÇÕ ÀúÀå---
+	// (1)---ê° pp->acheiv.ranking[0], ì¦‰ ì ìˆ˜ì´í•©ë“¤ ì €ì¥í•˜ê¸° ìœ„í•œ ì—°ê²°ë¦¬ìŠ¤íŠ¸ êµ¬ì„± ë° ì ìˆ˜ì´í•© ì €ì¥---
 	
 	q_head = (SORT_ARRAY*)malloc(sizeof(SORT_ARRAY));
 	q = q_head;
@@ -82,26 +85,18 @@ void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
 		p = p->p_next;
 
 	}
-	////(test) q->score ¿¡ ÀúÀåµÈ Á¡¼öÃÑÇÕµé °ª È®ÀÎ(Ãâ·Â) -> È®ÀÎ°á°ú ¹®Á¦¾øÀ½
-	//q = q_head;
-	//while (q != NULL) {
-	//	printf("%d\n", q->score);
-	//	q = q->q_next;
-	//}
-	
 
+	// (2)--ì €ì¥ëœ ì ìˆ˜ì´í•©ë“¤ ì •ë ¬--
 
-	// (2)--ÀúÀåµÈ Á¡¼öÃÑÇÕµé Á¤·Ä--
-
-	q = q_head; //¿¬±æ¸®½ºÆ®ÀÇ Çì´õ ÃÊ±âÈ­
+	q = q_head; //ì—°ê¸¸ë¦¬ìŠ¤íŠ¸ì˜ í—¤ë” ì´ˆê¸°í™”
 
 	while (q != NULL) {
 
 		q = q->q_next;
-		countNumber++; // ¿¬°áµÈ ³ëµå ¼ö, Áï ÇĞ»ı ¼ö
+		countNumber++; // ì—°ê²°ëœ ë…¸ë“œ ìˆ˜, ì¦‰ í•™ìƒ ìˆ˜
 	}
 
-	// SORTARRAY* q Á¡¼öÁ¤·Ä ½ÃÀÛ
+	// SORTARRAY* q ì ìˆ˜ì •ë ¬ ì‹œì‘
 	for (int step = 0; step < countNumber - 1; step++) {
 
 		int flag = 0;
@@ -109,7 +104,7 @@ void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
 
 		for (int i = 0; i < countNumber - 1 - step; i++) {
 
-			if( (q->score) < (q->q_next->score) ){ //³»¸²Â÷¼ø Á¤·Ä
+			if( (q->score) < (q->q_next->score) ){ //ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬
 				int temp = q->score;
 				q->score = q->q_next->score;
 				q->q_next->score = temp;
@@ -119,18 +114,11 @@ void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
 			q = q->q_next;
 		}
 		if (flag == 0) break;
-	} // SORTARRAY* q Á¡¼öÁ¤·Ä ³¡
+	} // SORTARRAY* q ì ìˆ˜ì •ë ¬ ë
 
-	////(test) q->score ¿¡ ÀúÀåµÈ Á¤·Ä ÈÄ Á¡¼öÃÑÇÕµé °ª È®ÀÎ(Ãâ·Â) -> È®ÀÎ°á°ú ¹®Á¦¾øÀ½
-	//q = q_head;
-	//while (q != NULL) {
-	//	printf("%d\n", q->score);
-	//	q = q->q_next;
-	//}
-
-	// (3)--¼øÀ§ Ã³¸®--
+	// (3)--ìˆœìœ„ ì²˜ë¦¬--
 	
-	p = p_head; //°¢ ¿¬°á¸®½ºÆ®ÀÇ Çì´õ ÃÊ±âÈ­, q´Â ¹İº¹°úÁ¤¿¡¼­ °è¼Ó Çì´õ ÃÊ±âÈ­ÇÒ ¿¹Á¤
+	p = p_head; //ê° ì—°ê²°ë¦¬ìŠ¤íŠ¸ì˜ í—¤ë” ì´ˆê¸°í™”, qëŠ” ë°˜ë³µê³¼ì •ì—ì„œ ê³„ì† í—¤ë” ì´ˆê¸°í™”í•  ì˜ˆì •
 
 	for (int n = 0; n < countNumber; n++) {
 
@@ -142,7 +130,7 @@ void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
 			if ( p->acheiv.ranking[0] == q->score ) {
 				p->acheiv.ranking[2] = order;
 				break;
-				// ¸¸¾à µÎ ÇĞ»ıÀÇ Á¡¼öÃÑÇÕÀÌ ¼­·Î ¶È°°À¸¸é ±×³É °°Àº¼øÀ§·Î Ã³¸®
+				// ë§Œì•½ ë‘ í•™ìƒì˜ ì ìˆ˜ì´í•©ì´ ì„œë¡œ ë˜‘ê°™ìœ¼ë©´ ê·¸ëƒ¥ ê°™ì€ìˆœìœ„ë¡œ ì²˜ë¦¬
 			}
 			else {
 				q = q->q_next;
@@ -162,33 +150,41 @@ void scoreSort(DATA* p_head){ //¼øÀ§°ª ÁöÁ¤ ÇÔ¼ö
 
 void main() {
 
-	int choice, i = 1; // i´Â ¸î ¹øÂ° ÀÔ·ÂÀÎÁö ÀÇ¹Ì
+	int i = 1; // iëŠ” ëª‡ ë²ˆì§¸ ì…ë ¥ì¸ì§€ ì˜ë¯¸
+	int load_sentry = 0;
+	char name[14];
 	DATA* p_head = NULL, * p_tail = NULL;
 	DATA* p = NULL;
 
 	while (1) {
-		int n=0, total = 0;
+		int choice, n=0, total = 0;
 		SCORE data = { 0, };
 
 		printf("\n    [Menu]     \n");
-		printf(" 1. ¼ºÀû ÀÔ·Â \n");
-		printf(" 2. ¼ºÀû È®ÀÎ \n");
-		printf(" 3. Á¾·á \n\n");
+		printf(" 1. ì„±ì  ì…ë ¥ \n");
+		printf(" 2. ì„±ì  í™•ì¸ \n");
+		printf(" 3. ì„±ì  ìˆ˜ì • ë° ì‚­ì œ \n");
+		printf(" 4. ì„±ì  ë¶ˆëŸ¬ì˜¤ê¸° \n");
+		printf(" 5. ì„±ì  ì €ì¥í•˜ê¸° \n");
+		printf(" 6. ì¢…ë£Œ \n\n");
 		printf(" ------------ \n\n");
-		printf(" ¼±ÅÃ (1~3) : ");
+		printf(" ì„ íƒ (1~6) : ");
+
+		rewind(stdin);
 		scanf("%d", &choice);
 
 
 		if (choice == 1) {
 
-			/* ±¸Á¶Ã¼ SCORE ÀÔ·Â (¿©±â¼­´Â SCORE data) */
-			printf("%d ¹øÂ° ÇĞ»ı ÀÌ¸§ ÀÔ·Â: ", i);
+			/* êµ¬ì¡°ì²´ SCORE ì…ë ¥ (ì—¬ê¸°ì„œëŠ” SCORE data) */
+			rewind(stdin);
+			printf("%d ë²ˆì§¸ í•™ìƒ ì´ë¦„ ì…ë ¥: ", i);
 			scanf("%s", &data.name);
-			printf("±¹¾î Á¡¼ö: ");
+			printf("êµ­ì–´ ì ìˆ˜: ");
 			scanf("%d", &data.score[0]);
-			printf("¿µ¾î Á¡¼ö: ");
+			printf("ì˜ì–´ ì ìˆ˜: ");
 			scanf("%d", &data.score[1]);
-			printf("¼öÇĞ Á¡¼ö: ");
+			printf("ìˆ˜í•™ ì ìˆ˜: ");
 			scanf("%d", &data.score[2]);
 
 			for (n = 0; n < SIZE_OF_SCORE; n++) {
@@ -198,17 +194,23 @@ void main() {
 			data.ranking[1] = total / SIZE_OF_SCORE;
 			data.ranking[2] = 0;
 
-			AddData(&p_head, &p_tail, data); //¿¬°á ¸®½ºÆ® ±¸¼º
+			AddData(&p_head, &p_tail, data); //ì—°ê²° ë¦¬ìŠ¤íŠ¸ êµ¬ì„±
 
 			i++;
 		}
 		else if (choice == 2) {
 
-			p = p_head; //p_head °ªÀÌ º¯ÇÏÁö ¾Ê±â À§ÇØ p¸¦ ÀÌ¿ë(Áß¿ä)
+			p = p_head; //p_head ê°’ì´ ë³€í•˜ì§€ ì•Šê¸° ìœ„í•´ pë¥¼ ì´ìš©(ì¤‘ìš”)
+
+			if (NULL == p) {
+				printf("ë¹ˆ ë°ì´í„°ì…ë‹ˆë‹¤\n");
+				break;
+			}
+
 			scoreSort(p);
 
 			printf("---------------------------------------------------\n");
-			printf("      ÀÌ¸§      ±¹¾î  ¿µ¾î  ¼öÇĞ   ÃÑÁ¡  Æò±Õ  µî¼ö\n");
+			printf("      ì´ë¦„      êµ­ì–´  ì˜ì–´  ìˆ˜í•™   ì´ì   í‰ê·   ë“±ìˆ˜\n");
 			printf("---------------------------------------------------\n");
 			while (NULL != p) {
 				printf("%-14s  %-4d  %-4d  %-4d  %-4d  %-4d  %-4d\n",
@@ -217,11 +219,168 @@ void main() {
 				printf("\n");
 				p = p->p_next;
 			};
+
+		}
+		else if(choice == 3){
+
+			//ì„±ì  ìˆ˜ì • ë° ì‚­ì œ
+			while (1) {
+
+				printf("\n1. ì„±ì  ìˆ˜ì •\n");
+				printf("2. ì„±ì  ì‚­ì œ\n");
+				printf("3. ë©”ì¸ í™”ë©´ìœ¼ë¡œ ëŒì•„ê°€ê¸°\n");
+				printf("ì„ íƒ(1~3): ");
+				scanf("%d", &choice);
+
+
+				if (choice == 1) {
+
+					p = p_head;
+
+					rewind(stdin);
+					printf("\nìˆ˜ì •í•  í•™ìƒì˜ ì´ë¦„ : ");
+					scanf("%s", &name);
+
+					while (NULL != p) {
+						if (0 == strcmp(p->acheiv.name, name)) { //ë‘ ê°œê°€ ê°™ìœ¼ë©´
+							break;
+						}
+						else {
+							p = p->p_next;
+						}
+					}
+
+					printf("êµ­ì–´ ì ìˆ˜: ");
+					scanf("%d", &(p->acheiv.score[0]));
+					printf("ì˜ì–´ ì ìˆ˜: ");
+					scanf("%d", &(p->acheiv.score[1]));
+					printf("ìˆ˜í•™ ì ìˆ˜: ");
+					scanf("%d", &(p->acheiv.score[2]));
+
+					for (n = 0; n < SIZE_OF_SCORE; n++) {
+						total = total + p->acheiv.score[n];
+					}
+
+					p->acheiv.ranking[0] = total;
+					p->acheiv.ranking[1] = total / SIZE_OF_SCORE;
+					p->acheiv.ranking[2] = 0; //ìˆœìœ„ì§€ì •ì€ ì„±ì í™•ì¸ ì„ íƒì‹œ ì§€ì •ë¨
+
+				}
+				else if (choice == 2) {
+
+					p = p_head;
+
+					printf("ì‚­ì œí•  í•™ìƒì˜ ì´ë¦„: ");
+					scanf("%s", name);
+
+					while (NULL != p) {
+						if (0 == strcmp(p->acheiv.name, name)) { //ë‘ ê°œê°€ ê°™ìœ¼ë©´
+							break;
+						}
+						else {
+							p = p->p_next;
+						}
+					}
+					
+					//while (NULL != p->p_next) {
+					//	//ë®ì–´ì“°ê¸°
+					//	
+					//	strcpy(p->acheiv.name, p->p_next->acheiv.name);
+					//	for (n = 0; n < SIZE_OF_SCORE; n++) {
+					//		p->acheiv.score[n] = p->p_next->acheiv.score[n];
+					//		p->acheiv.ranking[n] = p->p_next->acheiv.ranking[n];
+					//	}
+					//	p->p_next = p->p_next->p_next;
+
+					//	p = p->p_next;
+					//}
+					//free(p);
+				}
+				else if (choice == 3) {
+					break;
+				}
+				else printf("1~3ì¤‘ì—ì„œ ì„ íƒ");
+			}
+		}
+
+		else if (choice == 4 && load_sentry == 0) {
+
+			//ë¶ˆëŸ¬ì˜¤ê¸°
+
+			int file_size =0, score[3], ranking[3];
+			
+			FILE* p_file = fopen("archive.txt", "rt");
+
+			load_sentry = 1; //íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°ëŠ” í•œ ë²ˆë§Œ ê°€ëŠ¥ (ì¤‘ë³µí•´ì„œ ê°™ì€ ìë£Œë¥¼ ì—¬ëŸ¬ ë²ˆ ë¶ˆëŸ¬ì˜¤ëŠ”ê²ƒì„ ë§‰ê¸°ìœ„í•¨)
+
+			//char temp[60]; //íŒŒì¼ì˜ ì²«ë²ˆì§¸ ì¤„ ìŠ¤í‚µìœ„ì¹˜ -> 36
+			//int current_pointer = 0;
+			//fgets(temp, 60, p_file);
+			//current_pointer = ftell(p_file);
+			//printf("%d\n", current_pointer);
+
+			fseek(p_file, 0, SEEK_END);
+			file_size = ftell(p_file);
+			fseek(p_file, 36, SEEK_SET); // íŒŒì¼ì˜ ì²«ë²ˆì§¸ ì¤„ ìŠ¤í‚µìœ„ì¹˜
+
+			if (NULL != p_file) {
+				while (ftell(p_file) != file_size) {
+
+					SCORE data_archive = { 0, };
+
+					fscanf(p_file, "%s", name);
+					fscanf(p_file, "%d", &score[0]);
+					fscanf(p_file, "%d", &score[1]);
+					fscanf(p_file, "%d", &score[2]);
+					fscanf(p_file, "%d", &ranking[0]);
+					fscanf(p_file, "%d", &ranking[1]);
+					fscanf(p_file, "%d", &ranking[2]);
+
+					strcpy(data_archive.name, name);
+					data_archive.score[0] = score[0];
+					data_archive.score[1] = score[1];
+					data_archive.score[2] = score[2];
+					data_archive.ranking[0] = ranking[0];
+					data_archive.ranking[1] = ranking[1];
+					data_archive.ranking[2] = ranking[2];
+
+					AddData(&p_head, &p_tail, data_archive);
+				}
+
+			}
+			else printf("íŒŒì¼ ì½ê¸°ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.\n");
+			fclose(p_file);
+		}
+		else if (choice == 4 && load_sentry == 1) printf("íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°ëŠ” í•œ ë²ˆë§Œ ê°€ëŠ¥í•©ë‹ˆë‹¤");
+		else if (choice == 5) {
+
+		p = p_head;
+
+			//ì €ì¥í•˜ê¸°
+
+			scoreSort(p);
+
+			FILE* p_file = fopen("archive.txt", "wt");
+			if (NULL != p_file) {
+
+				fprintf(p_file, "ì´ë¦„ êµ­ì–´ ì˜ì–´ ìˆ˜í•™ ì´ì  í‰ê·  ìˆœìœ„\n");
+
+				while (NULL != p) {
+
+					fprintf(p_file, "%s %d %d %d %d %d %d", 
+						p->acheiv.name, p->acheiv.score[0], p->acheiv.score[1], p->acheiv.score[2], p->acheiv.ranking[0],
+						p->acheiv.ranking[1], p->acheiv.ranking[2]);
+					fprintf(p_file, "\n");
+					p = p->p_next;
+				}
+			}
+			else printf("íŒŒì¼ ì—´ê¸°ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤\n");
+			fclose(p_file);
 		}
 			
-		else if(choice ==3) { 
+		else if(choice == 6) { 
 			break; 
-			/*¿¬°á¸®½ºÆ® µ¿ÀûÇÒ´ç ÇØÁ¦*/
+			/*ì—°ê²°ë¦¬ìŠ¤íŠ¸ ë™ì í• ë‹¹ í•´ì œ*/
 			while (NULL != p_head) {
 				p = p_head;
 				p_head = p->p_next;
@@ -230,7 +389,7 @@ void main() {
 			p_tail = p_head; //NULL
 		}
 		else { 
-			printf("1~3Áß¿¡¼­ ¼±ÅÃ\n");
+			printf("1~6ì¤‘ì—ì„œ ì„ íƒ\n");
 			rewind(stdin);
 		}
 	}
