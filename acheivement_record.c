@@ -370,7 +370,7 @@ void main() {
 					fprintf(p_file, "%s %d %d %d %d %d %d", 
 						p->acheiv.name, p->acheiv.score[0], p->acheiv.score[1], p->acheiv.score[2], p->acheiv.ranking[0],
 						p->acheiv.ranking[1], p->acheiv.ranking[2]);
-					fprintf(p_file, "\n");
+					if (NULL != p->p_next )fprintf(p_file, "\n");
 					p = p->p_next;
 				}
 			}
