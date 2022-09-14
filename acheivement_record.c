@@ -249,6 +249,10 @@ void main() {
 							p = p->p_next;
 						}
 					}
+					if (NULL == p) {
+						printf("해당 이름을 가진 학생은 없습니다\n");
+						break;
+					}
 
 					printf("국어 점수: ");
 					scanf("%d", &(p->acheiv.score[0]));
@@ -280,6 +284,10 @@ void main() {
 						else {
 							p = p->p_next;
 						}
+					}
+					if (NULL == p) {
+						printf("해당 이름을 가진 학생은 없습니다\n");
+						break;
 					}
 					
 					//while (NULL != p->p_next) {
