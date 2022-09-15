@@ -51,6 +51,35 @@ void AddData(DATA** pp_head, DATA** pp_tail, SCORE input) {
 	(*pp_tail)->p_next = NULL;
 }
 
+int RemoveData(DATA** p_head, char name[]) {
+	
+	DATA *p = *p_head; //현재 포인터위치
+	DATA *p_remove;
+	
+	if (0 == strcmp(p->acheiv.name, name)) {//찾는 노드가 첫 노드
+
+		p_remove = *p_head;
+		*p_head = (*p_head)->p_next;
+		free(p_remove);
+
+		return 0;
+	}
+	else {//나머지 경우
+		while(p->p_next != NULL){
+			if (0 == strcmp(p->p_next->acheiv.name, name)) {
+				p_remove = p->p_next;
+				p->p_next = p->p_next->p_next; 
+				free(p_remove);
+				//마지막 노드 삭제시 p->p_next_p_next == NULL
+				return 0;
+			}
+			p = p->p_next;
+		}
+	}
+	
+	return 1; //오류있음, 해당 학생의 이름이 없는 경우
+}
+
 void scoreSort(DATA* p_head){ //순위값 지정 함수
 
 	struct sort_Array {
@@ -305,7 +334,15 @@ void main() {
 					//free(p);
 				}
 				else if (choice == 3) {
-					break;
+					
+					p = p_head;
+					DATA* p_remove;//
+
+					printf("삭제할 학생의 이름: ");
+					scanf("%s", name);
+
+					if (1 == RemoveData(&p_head, name)) printf("해당 이름을 가진 학생이 없습니다\n");
+					else printf("삭제가 완료되었습니다\n");
 				}
 				else printf("1~3중에서 선택");
 			}
